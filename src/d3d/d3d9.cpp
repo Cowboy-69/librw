@@ -484,17 +484,18 @@ ObjPipeline::create(void)
 	return pipe;
 }
 
+#define GETEXTRACOLOREXT(g) PLUGINOFFSET(ExtraVertColors, g, extraVertColorOffset)
+
 void
 defaultInstanceCB(Geometry *geo, InstanceDataHeader *header, bool32 reinstance)
 {
 	int i = 0;
 	VertexElement dcl[NUMDECLELT];
 	VertexStream *s = &header->vertexStream[0];
+	ExtraVertColors *extracols = GETEXTRACOLOREXT(geo);
 
 	bool isPrelit = (geo->flags & Geometry::PRELIT) != 0;
 	bool hasNormals = (geo->flags & Geometry::NORMALS) != 0;
-
-	// TODO: support both vertex buffers
 
 	if(!reinstance){
 		// Create declarations and buffers only the first time
@@ -516,12 +517,24 @@ defaultInstanceCB(Geometry *geo, InstanceDataHeader *header, bool32 reinstance)
 		s->geometryFlags |= 0x2;
 
 		if(isPrelit){
+			// night
 			dcl[i].stream = 0;
 			dcl[i].offset = stride;
 			dcl[i].type = D3DDECLTYPE_D3DCOLOR;
 			dcl[i].method = D3DDECLMETHOD_DEFAULT;
 			dcl[i].usage = D3DDECLUSAGE_COLOR;
 			dcl[i].usageIndex = 0;
+			i++;
+			s->geometryFlags |= 0x8;
+			stride += 4;
+
+			// day
+			dcl[i].stream = 0;
+			dcl[i].offset = stride;
+			dcl[i].type = D3DDECLTYPE_D3DCOLOR;
+			dcl[i].method = D3DDECLMETHOD_DEFAULT;
+			dcl[i].usage = D3DDECLUSAGE_COLOR;
+			dcl[i].usageIndex = 1;
 			i++;
 			s->geometryFlags |= 0x8;
 			stride += 4;
@@ -596,15 +609,27 @@ defaultInstanceCB(Geometry *geo, InstanceDataHeader *header, bool32 reinstance)
 
 	// Instance prelight colors
 	if(isPrelit && (!reinstance || geo->lockedSinceInst&Geometry::LOCKPRELIGHT)){
+		int j;
 		for(i = 0; dcl[i].usage != D3DDECLUSAGE_COLOR || dcl[i].usageIndex != 0; i++)
 			;
+		for(j = 0; dcl[j].usage != D3DDECLUSAGE_COLOR || dcl[j].usageIndex != 1; j++)
+			;
+
 		InstanceData *inst = header->inst;
 		uint32 n = header->numMeshes;
+		rw::RGBA *dayColors = geo->colors;//extracols->dayColors;
+		rw::RGBA *nightColors = extracols->nightColors;
+		if(nightColors == nil) nightColors = dayColors;
 		while(n--){
 			uint32 stride = header->vertexStream[dcl[i].stream].stride;
 			inst->vertexAlpha = instColor(vertFormatMap[dcl[i].type],
 				verts + dcl[i].offset + stride*inst->minVert,
-				geo->colors + inst->minVert,
+				nightColors + inst->minVert,
+				inst->numVertices,
+				stride);
+			inst->vertexAlpha |= instColor(vertFormatMap[dcl[j].type],
+				verts + dcl[j].offset + stride*inst->minVert,
+				dayColors + inst->minVert,
 				inst->numVertices,
 				stride);
 			inst++;

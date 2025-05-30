@@ -376,6 +376,9 @@ enum
 	VSLOC_lights	= 17,
 	VSLOC_afterLights	= VSLOC_lights + 8*3,
 
+	VSLOC_dayParam = 42,
+	VSLOC_nightParam = 43,
+
 	VSLOC_numLights	= 0,
 
 	PSLOC_fogColor = 0

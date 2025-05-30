@@ -5,7 +5,8 @@ struct VS_in
 	float4 Position		: POSITION;
 	float3 Normal		: NORMAL;
 	float2 TexCoord		: TEXCOORD0;
-	float4 Prelight		: COLOR0;
+	float4 DayColor		: COLOR0;
+	float4 NightColor	: COLOR1;
 };
 
 struct VS_out {
@@ -25,7 +26,7 @@ VS_out main(in VS_in input)
 
 	output.TexCoord0.xy = input.TexCoord;
 
-	output.Color = input.Prelight;
+	output.Color = input.DayColor * dayParam + input.NightColor * nightParam;
 	output.Color.rgb += ambientLight.rgb * surfAmbient;
 
 	int i;

@@ -52,6 +52,11 @@ matfxRender_Default(InstanceDataHeader *header, InstanceData *inst, int32 lightB
 	else
 		setVertexShader(default_all_VS);
 
+	float dayparam[4] = {1.0f, 1.0f, 1.0f, 1.0f};
+	float nightparam[4] = {0.0f, 0.0f, 0.0f, 0.0f};
+	d3ddevice->SetVertexShaderConstantF(VSLOC_dayParam, dayparam, 1);
+	d3ddevice->SetVertexShaderConstantF(VSLOC_nightParam, nightparam, 1);
+
 	SetRenderState(VERTEXALPHA, inst->vertexAlpha || m->color.alpha != 255);
 
 	if(inst->material->texture){

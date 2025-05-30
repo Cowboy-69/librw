@@ -243,4 +243,103 @@ PluginList::getPluginOffset(uint32 id)
 	return -1;
 }
 
+// Extra colors
+
+int32 extraVertColorOffset;
+
+void
+allocateExtraVertColors(rw::Geometry *g)
+{
+	ExtraVertColors *colordata =
+		PLUGINOFFSET(ExtraVertColors, g, extraVertColorOffset);
+	colordata->nightColors = new rw::RGBA[g->numVertices];
+	colordata->dayColors = new rw::RGBA[g->numVertices];
+	colordata->balance = 1.0f;
+}
+
+static void*
+createExtraVertColors(void *object, int32 offset, int32)
+{
+	ExtraVertColors *colordata =
+		PLUGINOFFSET(ExtraVertColors, object, offset);
+	colordata->nightColors = nil;
+	colordata->dayColors = nil;
+	colordata->balance = 0.0f;
+	return object;
+}
+
+static void*
+destroyExtraVertColors(void *object, int32 offset, int32)
+{
+	ExtraVertColors *colordata =
+		PLUGINOFFSET(ExtraVertColors, object, offset);
+	delete[] colordata->nightColors;
+	delete[] colordata->dayColors;
+	return object;
+}
+
+static rw::Stream*
+readExtraVertColors(rw::Stream *stream, int32, void *object, int32 offset, int32)
+{
+	uint32 hasData;
+	ExtraVertColors *colordata =
+		PLUGINOFFSET(ExtraVertColors, object, offset);
+	hasData = stream->readU32();
+	if(!hasData)
+		return stream;
+	rw::Geometry *geometry = (rw::Geometry*)object;
+	colordata->nightColors = new rw::RGBA[geometry->numVertices];
+	colordata->dayColors = new rw::RGBA[geometry->numVertices];
+	colordata->balance = 1.0f;
+	stream->read8(colordata->nightColors, geometry->numVertices*4);
+	if(geometry->colors)
+		memcpy(colordata->dayColors, geometry->colors,
+		       geometry->numVertices*4);
+	return stream;
+}
+
+static rw::Stream*
+writeExtraVertColors(rw::Stream *stream, int32, void *object, int32 offset, int32)
+{
+	ExtraVertColors *colordata =
+		PLUGINOFFSET(ExtraVertColors, object, offset);
+	stream->writeU32(colordata->nightColors != nil);
+	if(colordata->nightColors){
+		rw::Geometry *geometry = (rw::Geometry*)object;
+		stream->write8(colordata->nightColors, geometry->numVertices*4);
+	}
+	return stream;
+}
+
+static int32
+getSizeExtraVertColors(void *object, int32 offset, int32)
+{
+	ExtraVertColors *colordata =
+		PLUGINOFFSET(ExtraVertColors, object, offset);
+	rw::Geometry *geometry = (rw::Geometry*)object;
+	if(colordata->nightColors)
+		return 4 + geometry->numVertices*4;
+	return 0;
+}
+
+void
+registerExtraVertColorPlugin(void)
+{
+	extraVertColorOffset = rw::Geometry::registerPlugin(sizeof(ExtraVertColors),
+	                                                ID_EXTRAVERTCOLORS,
+	                                                createExtraVertColors,
+	                                                destroyExtraVertColors,
+	                                                nil);
+	rw::Geometry::registerPluginStream(ID_EXTRAVERTCOLORS,
+	                               readExtraVertColors,
+	                               writeExtraVertColors,
+	                               getSizeExtraVertColors);
+}
+
+rw::RGBA*
+getExtraVertColors(rw::Atomic *a)
+{
+	return PLUGINOFFSET(ExtraVertColors, a->geometry, extraVertColorOffset)->nightColors;
+}
+
 }

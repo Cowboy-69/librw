@@ -5,6 +5,8 @@ float4		matCol		: register(c12);
 float4		surfProps	: register(c13);
 float4		fogData	: register(c14);
 float4		ambientLight	: register(c15);
+float4		dayParam	: register(c42);
+float4		nightParam	: register(c43);
 
 #define surfAmbient (surfProps.x)
 #define surfSpecular (surfProps.y)

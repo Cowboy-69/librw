@@ -561,7 +561,8 @@ enum VendorID
 	// Used for rasters (platform-specific)
 	VEND_RASTER         = 10,
 	// Used for driver/device allocation tags
-	VEND_DRIVER         = 11
+	VEND_DRIVER         = 11,
+	VEND_ROCKSTAR       = 0x0253F2,
 };
 
 // TODO: modules (VEND_CRITERIONINT)
@@ -618,7 +619,9 @@ enum PluginID
 	ID_RASTERGL3     = MAKEPLUGINID(VEND_RASTER, PLATFORM_GL3),
 
 	// anything driver/device related (only as allocation tag)
-	ID_DRIVER        = MAKEPLUGINID(VEND_DRIVER, 0)
+	ID_DRIVER        = MAKEPLUGINID(VEND_DRIVER, 0),
+
+	ID_EXTRAVERTCOLORS  = MAKEPLUGINID(VEND_ROCKSTAR, 0xF9),
 };
 
 enum CoreModuleID
@@ -713,4 +716,8 @@ bool findChunk(Stream *s, uint32 type, uint32 *length, uint32 *version);
 
 int32 findPointer(void *p, void **list, int32 num);
 uint8 *getFileContents(const char *name, uint32 *len);
+
+extern float gDayNightBalance;
+void UpdateDayNightBalance(void);
+
 }

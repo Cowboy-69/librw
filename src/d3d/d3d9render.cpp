@@ -14,6 +14,9 @@
 #include "rwd3d9.h"
 
 namespace rw {
+
+	float gDayNightBalance;
+
 namespace d3d9 {
 using namespace d3d;
 
@@ -153,13 +156,25 @@ defaultRenderCB_Shader(Atomic *atomic, InstanceDataHeader *header)
 	vsBits = lightingCB_Shader(atomic);
 	uploadMatrices(atomic->getFrame()->getLTM());
 
+	float dayparam[4] = {1.0f, 1.0f, 1.0f, 1.0f};
+	float nightparam[4] = {0.0f, 0.0f, 0.0f, 0.0f};
+
 	// Pick a shader
-	if((vsBits & VSLIGHT_MASK) == 0)
+	if((vsBits & VSLIGHT_MASK) == 0) {
 		setVertexShader(default_amb_VS);
-	else if((vsBits & VSLIGHT_MASK) == VSLIGHT_DIRECT)
+
+		dayparam[0] = dayparam[1] = dayparam[2] = gDayNightBalance;
+		dayparam[3] = 0.0f;
+		nightparam[0] = nightparam[1] = nightparam[2] = 1.0f-gDayNightBalance;
+		nightparam[3] = 1.0f;
+	} else if((vsBits & VSLIGHT_MASK) == VSLIGHT_DIRECT) {
 		setVertexShader(default_amb_dir_VS);
-	else
+	} else {
 		setVertexShader(default_all_VS);
+	}
+	
+	d3ddevice->SetVertexShaderConstantF(VSLOC_dayParam, dayparam, 1);
+	d3ddevice->SetVertexShaderConstantF(VSLOC_nightParam, nightparam, 1);
 
 	InstanceData *inst = header->inst;
 	for(uint32 i = 0; i < header->numMeshes; i++){

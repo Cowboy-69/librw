@@ -902,4 +902,16 @@ struct TexDictionary
 	static TexDictionary *getCurrent(void);
 };
 
+struct ExtraVertColors
+{
+	RGBA *nightColors;
+	RGBA *dayColors;
+	float balance;
+};
+
+extern int32 extraVertColorOffset;
+void allocateExtraVertColors(rw::Geometry *g);
+void registerExtraVertColorPlugin(void);
+RGBA *getExtraVertColors(rw::Atomic *a);
+
 }

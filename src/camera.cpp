@@ -293,6 +293,7 @@ Camera::create(void)
 	cam->farPlane = 10.0f;
 	cam->fogPlane = 5.0f;
 	cam->projection = Camera::PERSPECTIVE;
+	cam->mirror = 0;
 
 	cam->frameBuffer = nil;
 	cam->zBuffer = nil;

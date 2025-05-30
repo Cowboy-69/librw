@@ -745,6 +745,7 @@ struct Camera
 	float32 nearPlane, farPlane;
 	float32 fogPlane;
 	int32 projection;
+	uint8 mirror;
 
 	Matrix viewMatrix;
 	float32 zScale, zShift;

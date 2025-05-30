@@ -1228,19 +1228,31 @@ beginUpdate(Camera *cam)
 	Matrix::invert(&inv, cam->getFrame()->getLTM());
 	// Since we're looking into positive Z,
 	// flip X to ge a left handed view space.
-	view[0]  = -inv.right.x;
+	if (cam->mirror)
+		view[0]  = inv.right.x;
+	else
+		view[0]  = -inv.right.x;
 	view[1]  =  inv.right.y;
 	view[2]  =  inv.right.z;
 	view[3]  =  0.0f;
-	view[4]  = -inv.up.x;
+	if (cam->mirror)
+		view[4]  = inv.up.x;
+	else
+		view[4]  = -inv.up.x;
 	view[5]  =  inv.up.y;
 	view[6]  =  inv.up.z;
 	view[7]  =  0.0f;
-	view[8]  =  -inv.at.x;
+	if (cam->mirror)
+		view[8]  = inv.at.x;
+	else
+		view[8]  =  -inv.at.x;
 	view[9]  =   inv.at.y;
 	view[10] =  inv.at.z;
 	view[11] =  0.0f;
-	view[12] = -inv.pos.x;
+	if (cam->mirror)
+		view[12] = inv.pos.x;
+	else
+		view[12] = -inv.pos.x;
 	view[13] =  inv.pos.y;
 	view[14] =  inv.pos.z;
 	view[15] =  1.0f;

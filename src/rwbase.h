@@ -720,4 +720,11 @@ uint8 *getFileContents(const char *name, uint32 *len);
 extern float gDayNightBalance;
 void UpdateDayNightBalance(void);
 
+struct VehicleFxParams {
+	bool bLightsOn;
+	bool bTailLightsOn;
+};
+
+extern VehicleFxParams gVehicleFxParams;
+
 }

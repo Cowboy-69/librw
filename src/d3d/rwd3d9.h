@@ -108,5 +108,7 @@ Texture *readNativeTexture(Stream *stream);
 void writeNativeTexture(Texture *tex, Stream *stream);
 uint32 getSizeNativeTexture(Texture *tex);
 
+void uploadEnvMatrix(Frame *frame);
+
 }
 }

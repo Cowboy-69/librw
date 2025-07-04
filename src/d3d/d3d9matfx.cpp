@@ -24,21 +24,6 @@ using namespace d3d;
 void matfxRenderCB_Shader(Atomic *atomic, InstanceDataHeader *header) {}
 #else
 
-static void *matfx_env_amb_VS;
-static void *matfx_env_amb_dir_VS;
-static void *matfx_env_all_VS;
-static void *matfx_env_PS;
-static void *matfx_env_tex_PS;
-
-enum
-{
-	VSLOC_texMat = VSLOC_afterLights,
-	VSLOC_colorClamp = VSLOC_texMat + 4,
-	VSLOC_envColor,
-
-	PSLOC_shininess = 1,
-};
-
 void
 matfxRender_Default(InstanceDataHeader *header, InstanceData *inst, int32 lightBits)
 {

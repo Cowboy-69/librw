@@ -27,9 +27,16 @@ void *default_amb_dir_VS;
 void *default_all_VS;
 void *default_PS;
 void *default_tex_PS;
+void *default_tex_emissive_PS;
 void *im2d_VS;
 void *im2d_PS;
 void *im2d_tex_PS;
+
+void *matfx_env_amb_VS;
+void *matfx_env_amb_dir_VS;
+void *matfx_env_all_VS;
+void *matfx_env_PS;
+void *matfx_env_tex_PS;
 
 
 void
@@ -66,6 +73,12 @@ createDefaultShaders(void)
 		default_tex_PS = createPixelShader((void*)PS_NAME);
 		assert(default_tex_PS);
 	}
+	{
+		static
+#include "shaders/default_tex_emissive_PS.h"
+		default_tex_emissive_PS = createPixelShader((void*)PS_NAME);
+		assert(default_tex_emissive_PS);
+	}
 
 	{
 		static
@@ -101,6 +114,8 @@ destroyDefaultShaders(void)
 	default_PS = nil;
 	destroyPixelShader(default_tex_PS);
 	default_tex_PS = nil;
+	destroyPixelShader(default_tex_emissive_PS);
+	default_tex_emissive_PS = nil;
 
 	destroyVertexShader(im2d_VS);
 	im2d_VS = nil;

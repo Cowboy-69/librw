@@ -413,11 +413,27 @@ extern void *default_amb_dir_VS;
 extern void *default_all_VS;
 extern void *default_PS;
 extern void *default_tex_PS;
+extern void *default_tex_emissive_PS;
 extern void *im2d_VS;
 extern void *im2d_PS;
 extern void *im2d_tex_PS;
 void createDefaultShaders(void);
 void destroyDefaultShaders(void);
+
+enum
+{
+	VSLOC_texMat = VSLOC_afterLights,
+	VSLOC_colorClamp = VSLOC_texMat + 4,
+	VSLOC_envColor,
+
+	PSLOC_shininess = 1,
+};
+
+extern void *matfx_env_amb_VS;
+extern void *matfx_env_amb_dir_VS;
+extern void *matfx_env_all_VS;
+extern void *matfx_env_PS;
+extern void *matfx_env_tex_PS;
 
 
 }
